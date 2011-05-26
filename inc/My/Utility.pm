@@ -3,14 +3,20 @@ use strict;
 use warnings;
 use base qw(Exporter);
 
-our @EXPORT_OK = qw(check_prebuilt_binaries check_src_build find_CMake_dir find_file sed_inplace);
+our @EXPORT_OK = qw(check_already_existing check_prebuilt_binaries check_src_build find_CMake_dir find_file sed_inplace);
 use Config;
 use File::Spec::Functions qw(splitdir catdir splitpath catpath rel2abs);
 use File::Find qw(find);
+use File::Which;
 use File::Copy qw(cp);
 use Cwd qw(realpath);
 
 our $cc = $Config{cc};
+
+# cmake-2.8.4-AIX-powerpc.tar.gz - 1a7692a1c3565770aa2c5fe620ccb477c221349c
+# cmake-2.8.4-IRIX64-64.tar.gz - 286dc02395545c62eb878fc6662a4ea666eb8046
+# cmake-2.8.4-IRIX64-n32.tar.gz - 26b3e27c77bb9a95a85a9f100b6129776a2a8cef
+# cmake-2.8.4-SunOS-sparc.tar.gz - 068c20450ee7e3074ac4c8396e3fa73f28aba35d
 
 my $prebuilt_binaries = [
     {
@@ -18,7 +24,7 @@ my $prebuilt_binaries = [
       url      => 'http://www.cmake.org/files/v2.8/cmake-2.8.4-win32-x86.zip',
       version  => '2.8.4',
       sha1sum  => '539ce250521d964a8770e0a7362db196dbc97fbc',
-      arch_re  => qr/^MSWin32-x86-multi-thread$/,
+      arch_re  => qr/^MSWin32-x(86|64)-multi-thread$/,
       os_re    => qr/^MSWin32$/
     },
     {
@@ -28,6 +34,14 @@ my $prebuilt_binaries = [
       sha1sum  => '51112b5e203e07a4430249e6252ec2ec461a3aff',
       arch_re  => qr/(86.*linux|linux.*86)/,
       os_re    => qr/^linux$/
+    },
+    {
+      title    => "Binaries darwin CMake-2.8.4",
+      url      => 'http://www.cmake.org/files/v2.8/cmake-2.8.4-Darwin-universal.tar.gz',
+      version  => '2.8.4',
+      sha1sum  => '190d9e536ed78c756e875747aedcad507fba74a8',
+      arch_re  => qr/./,
+      os_re    => qr/^darwin$/
     },
 ];
 
@@ -42,6 +56,28 @@ my $source_packs = [
 #  },
 ## you can add another src build set
 ];
+
+sub check_already_existing
+{
+  my $script = shift || 'cmake';
+  print "Gonna check for existing cmake...\n";
+  print "(scriptname=$script)\n";
+  my $devnull = File::Spec->devnull();
+  my $version = `$script --version 2>$devnull`;
+  return if($? >> 8);
+  my $prefix  = File::Which::which($script);
+  $version    =~ s/[\r\n]*$//;
+  $version    = $1 if $version =~ /(\d.*)/;
+  $prefix     =~ s/[\\\/]\Q$script\E(\.exe)?$//i;
+  #returning HASHREF
+  return {
+    title     => "Already installed CMake ver=$version prefix=$prefix",
+    buildtype => 'use_already_existing',
+    version   => $version,
+    script    => $script,
+    prefix    => $prefix,
+  };
+}
 
 sub check_prebuilt_binaries
 {

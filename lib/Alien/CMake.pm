@@ -13,11 +13,11 @@ Alien::CMake - Build and make available CMake library - L<http://cmake.org/>
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 $VERSION = eval $VERSION;
 
 =head1 SYNOPSIS
@@ -95,17 +95,55 @@ LICENSE file included with this module.
 sub config
 {
   my ($package, $param) = @_;
-  return _box2d_config_via_config_data($param) if(Alien::CMake::ConfigData->config('config'));
+  return _cmake_config_via_config_data($param) if(Alien::CMake::ConfigData->config('config'));
+}
+
+sub set_path
+{
+  my $path_sep = ':';
+  if($^O eq 'MSWin32')
+  {
+    $path_sep  = ';';
+    my @paths  = split($path_sep, $ENV{'PATH'});
+    my @_paths = ();
+    my $i = 0;
+    foreach (@paths)
+    {
+      push(@_paths, $_) unless -e "$_/sh.exe"; # cmake throws a warning when sh.exe is in path when using mingw32
+    }
+    
+    unless(Alien::CMake::ConfigData->config('script'))
+    {
+      unshift(@_paths, Alien::CMake->config('bin'));
+    }
+    
+    $ENV{'PATH'} = join($path_sep, @_paths);
+  }
+  elsif(!Alien::CMake::ConfigData->config('script'))
+  {
+    $ENV{'PATH'} = join($path_sep, Alien::CMake->config('bin'), $ENV{'PATH'});
+  }
+  
+  return $ENV{'PATH'};
 }
 
 ### internal functions
-sub _box2d_config_via_config_data
+sub _cmake_config_via_config_data
 {
-  my ($param) = @_;
-  my $share_dir = dist_dir('Alien-CMake');
-  my $subdir = Alien::CMake::ConfigData->config('share_subdir');
-  return unless $subdir;
-  my $real_prefix = catdir($share_dir, $subdir);
+  my ($param)     = @_;
+  my $real_prefix = '';
+  my $subdir      = Alien::CMake::ConfigData->config('share_subdir');
+  if(Alien::CMake::ConfigData->config('script'))
+  {
+    $real_prefix = $subdir;
+  }
+  else
+  {
+    my $share_dir = dist_dir('Alien-CMake');
+    return unless $subdir;
+    $real_prefix = catdir($share_dir, $subdir);
+  }
+  
   return unless ($param =~ /[a-z0-9_]*/i);
   my $val = Alien::CMake::ConfigData->config('config')->{$param};
   return unless $val;
