@@ -16,7 +16,6 @@ our $cc = $Config{cc};
 # cmake-2.8.4-AIX-powerpc.tar.gz - 1a7692a1c3565770aa2c5fe620ccb477c221349c
 # cmake-2.8.4-IRIX64-64.tar.gz - 286dc02395545c62eb878fc6662a4ea666eb8046
 # cmake-2.8.4-IRIX64-n32.tar.gz - 26b3e27c77bb9a95a85a9f100b6129776a2a8cef
-# cmake-2.8.4-SunOS-sparc.tar.gz - 068c20450ee7e3074ac4c8396e3fa73f28aba35d
 
 my $prebuilt_binaries = [
     {
@@ -29,11 +28,35 @@ my $prebuilt_binaries = [
     },
     {
       title    => "Binaries Linux/i386 CMake-2.8.4",
-      url      => 'http://www.cmake.org/files/v2.8/cmake-2.8.4-Linux-i386.tar.gz',
+      url      => 'http://froggs.de/cmake/cmake-2.8.4-linux-i386.tar.gz',
       version  => '2.8.4',
-      sha1sum  => '51112b5e203e07a4430249e6252ec2ec461a3aff',
+      sha1sum  => '9343a7fea7409b8a8154659c13e835521fe1b2fd',
       arch_re  => qr/(86.*linux|linux.*86)/,
       os_re    => qr/^linux$/
+    },
+    {
+      title    => "Binaries NetBSD/i386 CMake-2.8.1",
+      url      => 'http://froggs.de/cmake/cmake-2.8.1-netbsd-i386.tar.gz',
+      version  => '2.8.1',
+      sha1sum  => 'b0d2aa8bc214cf308311d2749b56e5e85ec280f3',
+      arch_re  => qr/./,
+      os_re    => qr/^netbsd$/
+    },
+    {
+      title    => "Binaries OpenBSD/i386 CMake-2.8.4",
+      url      => 'http://froggs.de/cmake/cmake-2.8.4-openbsd-i386.tar.gz',
+      version  => '2.8.4',
+      sha1sum  => 'f14e1fd3c757d37c796e6c1af04dd2ee3fac3ea1',
+      arch_re  => qr/./,
+      os_re    => qr/^openbsd$/
+    },
+    {
+      title    => "Binaries SunOS/Solaris CMake-2.8.4",
+      url      => 'http://www.cmake.org/files/v2.8/cmake-2.8.4-SunOS-sparc.tar.gz',
+      version  => '2.8.4',
+      sha1sum  => '068c20450ee7e3074ac4c8396e3fa73f28aba35d',
+      arch_re  => qr/./,
+      os_re    => qr/^solaris$/
     },
     {
       title    => "Binaries darwin CMake-2.8.4",

@@ -34,7 +34,7 @@ name: Alien-CMake
 provides:
   Alien::CMake:
     file: lib/Alien/CMake.pm
-    version: 0.02
+    version: 0.03
 requires:
   File::ShareDir: 1.00
   File::Spec: 0
@@ -43,4 +43,4 @@ resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Alien-CMake
   license: http://dev.perl.org/licenses/
   repository: http://github.com/PerlGameDev/Alien-CMake
-version: 0.02
+version: 0.03
