@@ -7,7 +7,9 @@ inc/My/Utility.pm
 lib/Alien/CMake.pm
 LICENSE
 MANIFEST			This list of files
+META.json
 META.yml
+MYMETA.json
 README
 t/001_load.t
 t/002_config.t
