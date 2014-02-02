@@ -54,7 +54,7 @@
    "provides" : {
       "Alien::CMake" : {
          "file" : "lib/Alien/CMake.pm",
-         "version" : "0.04"
+         "version" : "0.05"
       }
    },
    "release_status" : "stable",
@@ -69,5 +69,5 @@
          "url" : "http://github.com/PerlGameDev/Alien-CMake"
       }
    },
-   "version" : "0.04"
+   "version" : "0.05"
 }
